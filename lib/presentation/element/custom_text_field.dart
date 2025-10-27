@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final Widget? suffixIcon;
+  final Widget? prefixIcon;
 
   const CustomTextField({
     super.key,
@@ -15,11 +16,13 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.suffixIcon,
+    this.prefixIcon,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(left: 14, top: 10,),
       height: 56,
       decoration: BoxDecoration(
         color: const Color(0xffEEF0F6),
@@ -35,13 +38,17 @@ class CustomTextField extends StatelessWidget {
           color: const Color(0xff121212),
         ),
         decoration: InputDecoration(
+          prefixIcon: prefixIcon,
+
+
           hintText: hintText,
           hintStyle: GoogleFonts.inter(
             fontSize: 15,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w500,
             color: const Color(0xffBDBDBD),
           ),
           suffixIcon: suffixIcon,
+
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,

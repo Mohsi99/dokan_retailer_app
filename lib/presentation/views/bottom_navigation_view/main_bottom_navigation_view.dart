@@ -1,3 +1,4 @@
+import 'package:dokan_retailer_app/presentation/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../element/CustomBottomNavBar.dart';
@@ -14,7 +15,7 @@ class _MainBottomNavigationViewState extends State<MainBottomNavigationView> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = const [
-    SizedBox(),
+    HomeView(),
     SizedBox(),
     SizedBox(),
     SizedBox(),
