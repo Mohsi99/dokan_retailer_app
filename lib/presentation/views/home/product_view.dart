@@ -1,3 +1,5 @@
+import 'package:dokan_retailer_app/navigation_helper/navigation_helper_view.dart';
+import 'package:dokan_retailer_app/presentation/views/home/product_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -173,7 +175,8 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 160.5 / 289,
                       crossAxisSpacing: 16,
@@ -183,7 +186,11 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                     itemBuilder: (context, index) {
                       return ProductCard(
                         product: products[index],
-                        onBuyNow: () {},
+                        onBuyNow: () {
+                          NavigationHelper.push(
+                              context: context,
+                              targetClass: ProductDetailScreen());
+                        },
                         onFavorite: () {},
                       );
                     },
@@ -191,7 +198,9 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 20,)
+            SizedBox(
+              height: 20,
+            )
           ],
         ),
       ),
