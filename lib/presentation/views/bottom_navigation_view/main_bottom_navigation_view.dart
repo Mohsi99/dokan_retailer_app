@@ -2,6 +2,8 @@ import 'package:dokan_retailer_app/presentation/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../element/CustomBottomNavBar.dart';
+import '../0oder/oders_view.dart';
+import '../cart_views/cart_screen.dart';
 
 class MainBottomNavigationView extends StatefulWidget {
   const MainBottomNavigationView({super.key});
@@ -16,8 +18,8 @@ class _MainBottomNavigationViewState extends State<MainBottomNavigationView> {
 
   final List<Widget> _screens = const [
     HomeView(),
-    SizedBox(),
-    SizedBox(),
+    CartScreen(),
+    OrdersView(),
     SizedBox(),
   ];
 
