@@ -1,3 +1,5 @@
+import 'package:dokan_retailer_app/navigation_helper/navigation_helper_view.dart';
+import 'package:dokan_retailer_app/presentation/views/order/order_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -284,117 +286,122 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 11),
-      decoration: BoxDecoration(
-        color: Color(0xffF8F9FB),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'ID # ${order.orderId}',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xff121212),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: getStatusColor(order.status),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  order.status,
+    return GestureDetector(
+      onTap: (){
+        NavigationHelper.push(context: context, targetClass: OrderDetailView());
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.symmetric(horizontal: 12,vertical: 11),
+        decoration: BoxDecoration(
+          color: Color(0xffF8F9FB),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'ID # ${order.orderId}',
                   style: GoogleFonts.inter(
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: getStatusTextColor(order.status),
+                    color: Color(0xff121212),
                   ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 2),
-          Text(
-            '${order.itemCount} Items',
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Color(0xff000000).withValues(alpha: 0.4),
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            order.address,
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Color(0xff000000).withValues(alpha: 0.4),
-            ),
-          ),
-          SizedBox(height: 23),
-          Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Amount',
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: getStatusColor(order.status),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    order.status,
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xff000000).withValues(alpha: 0.4),
+                      color: getStatusTextColor(order.status),
                     ),
                   ),
-                  Text(
-                    order.amount,
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xffFF5934),
-                    ),
-                  ),
-                ],
+                ),
+              ],
+            ),
+            SizedBox(height: 2),
+            Text(
+              '${order.itemCount} Items',
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xff000000).withValues(alpha: 0.4),
               ),
-              SizedBox(width: 19),
-              Container(
-                height: 22,
-                width: 1,
-                color: Color(0xff000000).withValues(alpha: 0.25),
+            ),
+            SizedBox(height: 4),
+            Text(
+              order.address,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xff000000).withValues(alpha: 0.4),
               ),
-              SizedBox(width: 19),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Expected Delivery',
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff000000).withValues(alpha: 0.4),
+            ),
+            SizedBox(height: 23),
+            Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Amount',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff000000).withValues(alpha: 0.4),
+                      ),
                     ),
-                  ),
-                  Text(
-                    order.expectedDelivery,
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff121212),
+                    Text(
+                      order.amount,
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xffFF5934),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+                  ],
+                ),
+                SizedBox(width: 19),
+                Container(
+                  height: 22,
+                  width: 1,
+                  color: Color(0xff000000).withValues(alpha: 0.25),
+                ),
+                SizedBox(width: 19),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Expected Delivery',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff000000).withValues(alpha: 0.4),
+                      ),
+                    ),
+                    Text(
+                      order.expectedDelivery,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff121212),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
