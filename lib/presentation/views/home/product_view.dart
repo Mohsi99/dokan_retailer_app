@@ -191,7 +191,6 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                               context: context,
                               targetClass: ProductDetailScreen());
                         },
-                        onFavorite: () {},
                       );
                     },
                   ),

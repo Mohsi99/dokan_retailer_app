@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../element/CustomBottomNavBar.dart';
 import '../cart_views/cart_screen.dart';
+import '../favorites/favorites_items_view.dart';
 import '../home/home_view.dart';
 import '../order/oders_view.dart';
 import '../profile/profile_view.dart';
@@ -21,7 +22,7 @@ class _MainBottomNavigationViewState extends State<MainBottomNavigationView> {
     HomeView(),
     CartScreen(),
     OrdersView(),
-    SizedBox(),
+    SavedItemsScreen(),
     ProfileView(),
   ];
 

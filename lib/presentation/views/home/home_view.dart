@@ -1,10 +1,11 @@
 import 'package:dokan_retailer_app/navigation_helper/navigation_helper_view.dart';
 import 'package:dokan_retailer_app/presentation/element/custom_text_field.dart';
+import 'package:dokan_retailer_app/presentation/views/home/product_detail_view.dart';
 import 'package:dokan_retailer_app/presentation/views/home/product_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../element/product_card.dart';
+import '../favorites/favorites_items_view.dart';
 
 class ProductCategory {
   final String name;
@@ -26,7 +27,6 @@ class HomeView extends StatelessWidget {
         id: 1,
         name: 'Wheat Grain Bag',
         image: 'assets/image/image 1 (8).png',
-        // Add your image to assets
         price: 1200,
         discountPrice: 1600,
         backgroundColor: '#EEF0F6',
@@ -40,6 +40,7 @@ class HomeView extends StatelessWidget {
         backgroundColor: '#EEF0F6',
       ),
     ];
+
     final List<ProductCategory> categories = [
       ProductCategory(name: "Rice", imagePath: "assets/image/image 1.png"),
       ProductCategory(name: "Wheat", imagePath: "assets/image/image 1 (1).png"),
@@ -80,9 +81,18 @@ class HomeView extends StatelessWidget {
                         fontSize: 21.18,
                       ),
                     ),
-                    ImageIcon(
-                      AssetImage("assets/icon/ph_bell-light.png"),
-                      size: 24,
+                    Stack(
+                      children: [
+                        IconButton(
+                          icon: ImageIcon(
+                            AssetImage("assets/icon/ph_bell-light.png"),
+                            size: 24,
+                          ),
+                          onPressed: () {
+                            // Navigate to notifications
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -109,17 +119,16 @@ class HomeView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // ✅ Fixed: GridView for 2 rows with horizontal scrolling
               SizedBox(
-                height: 230, // Increased height to prevent overflow
+                height: 230,
                 child: GridView.builder(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   scrollDirection: Axis.horizontal,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2, // 2 rows
+                    crossAxisCount: 2,
                     mainAxisSpacing: 14,
                     crossAxisSpacing: 8,
-                    childAspectRatio: 2, // Adjusted to give more vertical space
+                    childAspectRatio: 2,
                   ),
                   itemCount: categories.length + 1,
                   itemBuilder: (context, index) {
@@ -217,18 +226,34 @@ class HomeView extends StatelessWidget {
               SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text(
-                  "Recommended for you",
-                  style: GoogleFonts.inter(
-                    color: const Color(0xff121212),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Recommended for you",
+                      style: GoogleFonts.inter(
+                        color: const Color(0xff121212),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        NavigationHelper.push(
+                          context: context,
+                          targetClass: SavedItemsScreen(),
+                        );
+                      },
+                      child: Icon(
+                        Icons.favorite_border,
+                        color: Color(0xffFF5934),
+                        size: 24,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
-                height: 14,
-              ),
+              SizedBox(height: 14),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: GridView.builder(
@@ -245,14 +270,12 @@ class HomeView extends StatelessWidget {
                     return ProductCard(
                       product: products[index],
                       onBuyNow: () {},
-                      onFavorite: () {},
+                      onTap: () {},
                     );
                   },
                 ),
               ),
-              SizedBox(
-                height: 20,
-              )
+              SizedBox(height: 20),
             ],
           ),
         ),
