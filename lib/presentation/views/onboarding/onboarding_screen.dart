@@ -1,4 +1,5 @@
 import 'package:dokan_retailer_app/navigation_helper/navigation_helper_view.dart';
+import 'package:dokan_retailer_app/presentation/views/auth/create_account_view.dart';
 import 'package:dokan_retailer_app/presentation/views/auth/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -80,7 +81,8 @@ class OnboardingScreen extends StatelessWidget {
                     height: 56,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Navigate to Create Account
+                        NavigationHelper.push(
+                            context: context, targetClass: CreateAccountView());
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFFF5934),

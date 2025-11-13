@@ -1,5 +1,7 @@
 import 'package:dokan_retailer_app/presentation/views/bottom_navigation_view/main_bottom_navigation_view.dart';
+import 'package:dokan_retailer_app/provider/auth_provider.dart';
 import 'package:dokan_retailer_app/provider/favorites_provider.dart';
+import 'package:dokan_retailer_app/splash_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'presentation/views/home/home_view.dart';
@@ -16,6 +18,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: MaterialApp(
         title: 'Dokan Retailer App',
@@ -23,7 +26,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
 
         ),
-        home: MainBottomNavigationView(),
+        home: SplashScreen(),
       ),
     );
   }

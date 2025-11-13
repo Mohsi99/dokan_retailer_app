@@ -8,6 +8,8 @@ class CustomTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
+  final String? Function(String?)? validator;
+  final int? maxLength;
 
   const CustomTextField({
     super.key,
@@ -17,21 +19,23 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.suffixIcon,
     this.prefixIcon,
+    this.validator,
+    this.maxLength,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 14, top: 10,),
-      height: 56,
       decoration: BoxDecoration(
         color: const Color(0xffEEF0F6),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
+        validator: validator,
+        maxLength: maxLength,
         style: GoogleFonts.inter(
           fontSize: 15,
           fontWeight: FontWeight.w400,
@@ -39,8 +43,6 @@ class CustomTextField extends StatelessWidget {
         ),
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
-
-
           hintText: hintText,
           hintStyle: GoogleFonts.inter(
             fontSize: 15,
@@ -48,7 +50,7 @@ class CustomTextField extends StatelessWidget {
             color: const Color(0xffBDBDBD),
           ),
           suffixIcon: suffixIcon,
-
+          counterText: '',
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,
@@ -64,9 +66,28 @@ class CustomTextField extends StatelessWidget {
               width: 1.5,
             ),
           ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(
+              color: Colors.red,
+              width: 1.5,
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(
+              color: Colors.red,
+              width: 1.5,
+            ),
+          ),
+          errorStyle: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: Colors.red,
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 18,
-            vertical: 12,
+            vertical: 16,
           ),
         ),
       ),
