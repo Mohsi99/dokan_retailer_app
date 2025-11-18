@@ -1,7 +1,10 @@
+import 'package:dokan_retailer_app/presentation/views/bottom_navigation_view/main_bottom_navigation_view.dart';
 import 'package:dokan_retailer_app/presentation/views/onboarding/onboarding_screen.dart';
+import 'package:dokan_retailer_app/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,11 +18,20 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => OnboardingScreen(),
-        ),
-      );
+      final isLoggedIn = context.read<AuthProvider>().isLoggedIn;
+      if (isLoggedIn) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => MainBottomNavigationView(),
+          ),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => OnboardingScreen(),
+          ),
+        );
+      }
     });
   }
 
@@ -32,7 +44,6 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Spacer(),
-
             Column(
               children: [
                 Text(
@@ -61,9 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ],
             ),
-
             const Spacer(),
-
             Padding(
               padding: const EdgeInsets.only(bottom: 24.0),
               child: Text(

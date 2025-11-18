@@ -68,7 +68,6 @@ class AuthProvider extends ChangeNotifier {
       if (registerModel.success) {
         _currentUser = registerModel.user;
         await _saveUserData(registerModel.user);
-        _isLoggedIn = true;
         _isLoading = false;
         notifyListeners();
         return true;

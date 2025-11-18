@@ -1,11 +1,12 @@
-import 'package:dokan_retailer_app/navigation_helper/navigation_helper_view.dart';
-import 'package:dokan_retailer_app/presentation/element/custom_text_field.dart';
-import 'package:dokan_retailer_app/presentation/views/home/product_detail_view.dart';
-import 'package:dokan_retailer_app/presentation/views/home/product_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../../../navigation_helper/navigation_helper_view.dart';
+import '../../../provider/banner_provider.dart';
+import '../../element/custom_text_field.dart';
 import '../../element/product_card.dart';
 import '../favorites/favorites_items_view.dart';
+import 'product_view.dart';
 
 class ProductCategory {
   final String name;
@@ -17,8 +18,72 @@ class ProductCategory {
   });
 }
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+  bool _isAutoSliding = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Fetch banners when the screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print('📱 HomeView: Fetching banners...');
+      final bannerProvider =
+          Provider.of<BannerProvider>(context, listen: false);
+      bannerProvider.fetchBanners().then((_) {
+        print('📱 HomeView: Banners loaded: ${bannerProvider.banners.length}');
+        if (bannerProvider.banners.isNotEmpty && !_isAutoSliding) {
+          _startAutoSlide();
+        }
+      });
+    });
+  }
+
+  void _startAutoSlide() {
+    if (_isAutoSliding) return;
+    _isAutoSliding = true;
+    print('📱 HomeView: Starting auto-slide');
+    Future.delayed(const Duration(seconds: 3), _autoSlide);
+  }
+
+  void _autoSlide() {
+    if (!mounted || !_isAutoSliding) return;
+
+    final bannerProvider = Provider.of<BannerProvider>(context, listen: false);
+
+    if (bannerProvider.banners.isEmpty) {
+      Future.delayed(const Duration(seconds: 3), _autoSlide);
+      return;
+    }
+
+    _currentPage = (_currentPage + 1) % bannerProvider.banners.length;
+
+    if (_pageController.hasClients) {
+      _pageController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOut,
+      );
+    }
+
+    Future.delayed(const Duration(seconds: 3), _autoSlide);
+  }
+
+  @override
+  void dispose() {
+    _isAutoSliding = false;
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,13 +127,14 @@ class HomeView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ImageIcon(
+                    const ImageIcon(
                       AssetImage(
                           "assets/icon/streamline_interface-dashboard-layout-circle-app-application-dashboard-home-layout-circle (1).png"),
                       size: 24,
@@ -84,26 +150,214 @@ class HomeView extends StatelessWidget {
                     Stack(
                       children: [
                         IconButton(
-                          icon: ImageIcon(
+                          icon: const ImageIcon(
                             AssetImage("assets/icon/ph_bell-light.png"),
                             size: 24,
                           ),
-                          onPressed: () {
-                            // Navigate to notifications
-                          },
+                          onPressed: () {},
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              Image.asset(
-                "assets/icon/Frame 55.png",
-                height: 198,
-                width: double.infinity,
-                fit: BoxFit.cover,
+
+              // Banner Carousel
+              Consumer<BannerProvider>(
+                builder: (context, bannerProvider, child) {
+                  print(
+                      '📱 Banner Widget: isLoading=${bannerProvider.isLoading}, bannerCount=${bannerProvider.banners.length}, error=${bannerProvider.errorMessage}');
+
+                  // Loading state
+                  if (bannerProvider.isLoading) {
+                    return Container(
+                      height: 198,
+                      width: double.infinity,
+                      color: const Color(0xffEEF0F6),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFFF5934),
+                          strokeWidth: 3,
+                        ),
+                      ),
+                    );
+                  }
+
+                  // Error state
+                  if (bannerProvider.errorMessage != null) {
+                    print('📱 Banner Error: ${bannerProvider.errorMessage}');
+                    return Container(
+                      height: 198,
+                      width: double.infinity,
+                      color: const Color(0xffEEF0F6),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.error_outline,
+                              color: Colors.red,
+                              size: 48,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Failed to load banners',
+                              style: GoogleFonts.inter(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                print('📱 Retry button pressed');
+                                bannerProvider.fetchBanners();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF5934),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 8,
+                                ),
+                              ),
+                              child: Text(
+                                'Retry',
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  // Empty state - show default banner
+                  if (bannerProvider.banners.isEmpty) {
+                    print('📱 No banners available, showing default');
+                    return Image.asset(
+                      "assets/icon/Frame 55.png",
+                      height: 198,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    );
+                  }
+
+                  // Success state - show banners
+                  print(
+                      '📱 Displaying ${bannerProvider.banners.length} banners');
+                  return Column(
+                    children: [
+                      SizedBox(
+                        height: 198,
+                        child: PageView.builder(
+                          controller: _pageController,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _currentPage = index;
+                            });
+                          },
+                          itemCount: bannerProvider.banners.length,
+                          itemBuilder: (context, index) {
+                            final banner = bannerProvider.banners[index];
+                            print('📱 Loading banner $index: ${banner.image}');
+
+                            return ClipRRect(
+                              child: Image.network(
+                                banner.image,
+                                width: double.infinity,
+                                height: 198,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    print(
+                                        '✅ Banner $index loaded successfully');
+                                    return child;
+                                  }
+
+                                  final progress = loadingProgress
+                                              .expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null;
+
+                                  return Container(
+                                    color: const Color(0xffEEF0F6),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        value: progress,
+                                        color: const Color(0xFFFF5934),
+                                        strokeWidth: 3,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  print(
+                                      '❌ Banner $index failed to load: $error');
+                                  return Container(
+                                    color: const Color(0xffEEF0F6),
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.broken_image_outlined,
+                                            size: 48,
+                                            color: Colors.grey,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Image failed to load',
+                                            style: GoogleFonts.inter(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Indicator dots
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          bannerProvider.banners.length,
+                          (index) => AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: _currentPage == index ? 24 : 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: _currentPage == index
+                                  ? const Color(0xFFFF5934)
+                                  : const Color(0xffBDBDBD),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
+
               const SizedBox(height: 20),
+
+              // Search Field
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomTextField(
@@ -118,7 +372,10 @@ class HomeView extends StatelessWidget {
                   ),
                 ),
               ),
+
               const SizedBox(height: 20),
+
+              // Categories
               SizedBox(
                 height: 230,
                 child: GridView.builder(
@@ -137,7 +394,7 @@ class HomeView extends StatelessWidget {
                         onTap: () {
                           NavigationHelper.push(
                               context: context,
-                              targetClass: ProductViewScreen());
+                              targetClass: const ProductViewScreen());
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -150,7 +407,7 @@ class HomeView extends StatelessWidget {
                                 color: Color(0xffFFF0ED),
                               ),
                               alignment: Alignment.center,
-                              child: ImageIcon(
+                              child: const ImageIcon(
                                 AssetImage(
                                     "assets/icon/streamline_interface-dashboard-layout-circle-app-application-dashboard-home-layout-circle (1).png"),
                                 size: 24,
@@ -175,9 +432,7 @@ class HomeView extends StatelessWidget {
 
                     final category = categories[index];
                     return GestureDetector(
-                      onTap: () {
-                        // Handle category tap
-                      },
+                      onTap: () {},
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -218,12 +473,15 @@ class HomeView extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(height: 20),
-              Divider(
+
+              const SizedBox(height: 20),
+              const Divider(
                 height: 1,
                 color: Color(0xffEEF0F6),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
+
+              // Recommended Products
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Row(
@@ -241,10 +499,10 @@ class HomeView extends StatelessWidget {
                       onTap: () {
                         NavigationHelper.push(
                           context: context,
-                          targetClass: SavedItemsScreen(),
+                          targetClass: const SavedItemsScreen(),
                         );
                       },
-                      child: Icon(
+                      child: const Icon(
                         Icons.favorite_border,
                         color: Color(0xffFF5934),
                         size: 24,
@@ -253,7 +511,7 @@ class HomeView extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 14),
+              const SizedBox(height: 14),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: GridView.builder(
@@ -275,7 +533,7 @@ class HomeView extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),
